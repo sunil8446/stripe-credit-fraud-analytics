@@ -5,8 +5,7 @@ DBT := .venv/bin/dbt
 UV_CACHE_DIR ?= .uv-cache
 
 setup:
-	UV_CACHE_DIR=$(UV_CACHE_DIR) uv venv --python 3.12
-	UV_CACHE_DIR=$(UV_CACHE_DIR) uv pip install --python .venv/bin/python -r requirements-dev.txt
+	UV_CACHE_DIR=$(UV_CACHE_DIR) uv sync --extra dbt --extra dev --locked
 
 seed:
 	$(DBT) seed --project-dir dbt_project --profiles-dir dbt_project --target local

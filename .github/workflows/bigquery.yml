@@ -13,7 +13,7 @@ jobs:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GCP_LOCATION: US
       DBT_BIGQUERY_DATASET: dbt_fraud_analytics
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: gcp-key.json
     steps:
       - uses: actions/checkout@v4
 

@@ -1,5 +1,11 @@
 # Fraud Analytics Platform
 
+[![CI](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/ci.yml)
+[![Dashboard](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/pages.yml/badge.svg)](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/pages.yml)
+
+[View the live dashboard](https://sunil8446.github.io/stripe-credit-fraud-analytics/)
+· [Explore dbt lineage docs](https://sunil8446.github.io/stripe-credit-fraud-analytics/dbt-docs/)
+
 An end-to-end credit-card fraud analytics project inspired by Stripe-style risk
 monitoring. It turns the public ULB transaction dataset into tested analytical
 models and an interactive dashboard.

@@ -1,0 +1,37 @@
+name: fraud_analytics
+version: 1.0.0
+config-version: 2
+
+profile: fraud_analytics
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+target-path: target
+clean-targets: ["target", "dbt_packages", "logs"]
+
+models:
+  fraud_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  fraud_analytics:
+    +schema: raw
+    transactions_sample:
+      +alias: transactions
+      +column_types:
+        transaction_id: varchar
+        seconds_elapsed: bigint
+        amount: double
+        is_fraud: integer
+

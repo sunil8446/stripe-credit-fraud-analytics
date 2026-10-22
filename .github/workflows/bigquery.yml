@@ -1,0 +1,38 @@
+name: BigQuery build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_LOCATION: US
+      DBT_BIGQUERY_DATASET: dbt_fraud_analytics
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-key.json
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install cloud dependencies
+        run: pip install -e ".[dbt,bigquery]"
+
+      - name: Configure Google credentials
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: printf '%s' "$GCP_CREDENTIALS" > "$GOOGLE_APPLICATION_CREDENTIALS"
+
+      - name: Validate configuration
+        run: dbt debug --project-dir dbt_project --profiles-dir dbt_project --target bigquery
+
+      - name: Build BigQuery models
+        run: dbt build --project-dir dbt_project --profiles-dir dbt_project --target bigquery
+

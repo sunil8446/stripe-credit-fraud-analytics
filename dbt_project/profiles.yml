@@ -1,0 +1,20 @@
+fraud_analytics:
+  target: "{{ env_var('DBT_TARGET', 'local') }}"
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', 'fraud_analytics.duckdb') }}"
+      schema: main
+      threads: 4
+
+    bigquery:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: "{{ env_var('DBT_BIGQUERY_DATASET', 'dbt_fraud_analytics') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      location: "{{ env_var('GCP_LOCATION', 'US') }}"
+      priority: interactive
+      threads: 4
+      timeout_seconds: 300
+

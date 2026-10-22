@@ -1,0 +1,57 @@
+name: Publish dashboard
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: pip install -e ".[dbt]"
+
+      - name: Build analytics assets
+        run: |
+          dbt seed --project-dir dbt_project --profiles-dir dbt_project --target local
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local
+          python scripts/export_dashboard.py
+          dbt docs generate --project-dir dbt_project --profiles-dir dbt_project --target local
+          mkdir -p dashboard/dbt-docs
+          cp dbt_project/target/index.html dashboard/dbt-docs/
+          cp dbt_project/target/manifest.json dashboard/dbt-docs/
+          cp dbt_project/target/catalog.json dashboard/dbt-docs/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

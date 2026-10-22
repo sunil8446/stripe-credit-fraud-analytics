@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: int_transaction_features
+    description: Transactions enriched with interpretable time, amount, and heuristic risk features.
+    columns:
+      - name: transaction_id
+        data_tests: [not_null, unique]
+      - name: amount_segment
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [zero, micro, small, medium, large]
+      - name: time_of_day
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [night, morning, afternoon, evening]
+      - name: heuristic_risk_tier
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [low, review, high, critical]
+
+  - name: int_fraud_hourly
+    description: Hourly transaction and fraud aggregates used by monitoring views.
+    columns:
+      - name: transaction_date
+        data_tests: [not_null]
+      - name: transaction_hour
+        data_tests: [not_null]
+

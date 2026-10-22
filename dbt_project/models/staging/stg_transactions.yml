@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_transactions
+    description: Cleaned, typed, and deduplicated transaction records.
+    columns:
+      - name: transaction_id
+        description: Stable identifier assigned during ingestion.
+        data_tests: [not_null, unique]
+      - name: transaction_at
+        data_tests: [not_null]
+      - name: amount
+        data_tests: [not_null]
+      - name: is_fraud
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+                quote: false
+

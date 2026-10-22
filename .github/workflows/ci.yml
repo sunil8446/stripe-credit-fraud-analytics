@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: pip install -e ".[dbt,dev]"
+
+      - name: Lint Python
+        run: ruff check src scripts tests
+
+      - name: Test Python
+        run: pytest
+
+      - name: Build and test dbt project
+        run: |
+          dbt seed --project-dir dbt_project --profiles-dir dbt_project --target local
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local
+
+      - name: Export dashboard data
+        run: python scripts/export_dashboard.py
+

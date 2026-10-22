@@ -1,0 +1,39 @@
+[project]
+name = "fraud-analytics-platform"
+version = "0.1.0"
+description = "Local-first and BigQuery-ready credit-card fraud analytics platform"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+dependencies = [
+  "duckdb>=1.1,<2",
+  "pandas>=2.2,<3",
+  "pyarrow>=17,<22",
+]
+
+[project.optional-dependencies]
+dbt = [
+  "dbt-core>=1.10,<2",
+  "dbt-duckdb>=1.9,<2",
+]
+bigquery = [
+  "dbt-bigquery>=1.10,<2",
+  "google-cloud-bigquery>=3.25,<4",
+  "pandas-gbq>=0.26,<1",
+]
+dev = [
+  "pytest>=8,<9",
+  "ruff>=0.9,<1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+

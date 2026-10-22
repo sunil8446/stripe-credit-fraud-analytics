@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: dim_dates
+    description: Calendar dimension derived from transaction timestamps.
+    columns:
+      - name: transaction_date
+        data_tests: [not_null, unique]
+
+  - name: fct_fraud_daily
+    description: Daily fraud and payment-volume KPIs.
+    columns:
+      - name: transaction_date
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: transaction_date
+      - name: fraud_rate_pct
+        data_tests: [not_null]
+
+  - name: fct_fraud_by_segment
+    description: Fraud performance by amount segment and time of day.
+    columns:
+      - name: amount_segment
+        data_tests: [not_null]
+      - name: time_of_day
+        data_tests: [not_null]
+
+  - name: fct_risk_tier
+    description: Observed outcomes for each interpretable heuristic risk tier.
+    columns:
+      - name: heuristic_risk_tier
+        data_tests: [not_null, unique]
+

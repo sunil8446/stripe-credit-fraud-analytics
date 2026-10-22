@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Raw transaction data loaded from the ULB dataset or the CI sample seed.
+    database: "{{ target.database }}"
+    schema: raw
+    tables:
+      - name: transactions
+        description: One row per imported card transaction before transformation.
+        columns:
+          - name: transaction_id
+            data_tests: [not_null]
+          - name: seconds_elapsed
+            data_tests: [not_null]
+          - name: amount
+            data_tests: [not_null]
+          - name: is_fraud
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: [0, 1]
+                    quote: false
+

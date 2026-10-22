@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive credit-card fraud analytics dashboard" />
+    <title>SignalGuard · Fraud Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="#overview" aria-label="SignalGuard home">
+          <span class="brand-mark" aria-hidden="true">SG</span>
+          <span>SignalGuard</span>
+        </a>
+        <nav aria-label="Primary">
+          <a class="nav-link active" href="#overview"><span>01</span>Overview</a>
+          <a class="nav-link" href="#segments"><span>02</span>Segments</a>
+          <a class="nav-link" href="#risk"><span>03</span>Risk tiers</a>
+          <a class="nav-link" href="#pipeline"><span>04</span>Pipeline</a>
+        </nav>
+        <div class="sidebar-status">
+          <span class="pulse"></span>
+          <div><strong>Pipeline healthy</strong><small>dbt checks passing</small></div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar" id="overview">
+          <div>
+            <p class="eyebrow">Risk intelligence / portfolio demo</p>
+            <h1>Fraud command center</h1>
+          </div>
+          <div class="dataset-pill"><span></span><div><strong>ULB transactions</strong><small id="freshness">Demo snapshot</small></div></div>
+        </header>
+
+        <section class="hero">
+          <div>
+            <p class="section-label">Observed fraud rate</p>
+            <div class="hero-number" id="fraud-rate">—</div>
+            <p class="hero-copy">Labeled transaction outcomes, monitored across amount bands and time windows.</p>
+          </div>
+          <div class="hero-signal" aria-label="Risk signal visualization">
+            <div class="orb"><span>LIVE</span></div>
+            <p><strong id="fraud-count">—</strong> flagged cases</p>
+          </div>
+        </section>
+
+        <section class="kpi-grid" aria-label="Key performance indicators">
+          <article class="kpi"><p>Transactions</p><strong id="transaction-count">—</strong><small>validated records</small></article>
+          <article class="kpi"><p>Total volume</p><strong id="transaction-amount">—</strong><small>observed value</small></article>
+          <article class="kpi danger"><p>Fraud exposure</p><strong id="fraud-amount">—</strong><small>labeled fraud value</small></article>
+          <article class="kpi"><p>Highest-risk band</p><strong id="highest-segment">—</strong><small id="highest-segment-rate">by observed rate</small></article>
+        </section>
+
+        <section class="chart-grid" id="segments">
+          <article class="panel wide">
+            <div class="panel-heading"><div><p class="section-label">Trend</p><h2>Daily transaction pulse</h2></div><span class="tag">Volume + fraud</span></div>
+            <div class="chart-wrap"><canvas id="daily-chart"></canvas></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><p class="section-label">Distribution</p><h2>Fraud by amount</h2></div></div>
+            <div class="chart-wrap"><canvas id="segment-chart"></canvas></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><p class="section-label">Timing</p><h2>Risk through the day</h2></div></div>
+            <div class="chart-wrap"><canvas id="time-chart"></canvas></div>
+          </article>
+        </section>
+
+        <section class="panel risk-panel" id="risk">
+          <div class="panel-heading"><div><p class="section-label">Explainable triage</p><h2>Heuristic risk tiers</h2></div><span class="tag accent">No label leakage</span></div>
+          <div class="risk-layout">
+            <div class="chart-wrap compact"><canvas id="risk-chart"></canvas></div>
+            <div class="risk-table" id="risk-table"></div>
+          </div>
+        </section>
+
+        <section class="pipeline" id="pipeline">
+          <div><p class="section-label">Data lineage</p><h2>From raw evidence to decisions</h2></div>
+          <div class="pipeline-flow" aria-label="Pipeline stages">
+            <div><span>01</span><strong>Ingest</strong><small>CSV → DuckDB / BigQuery</small></div><i></i>
+            <div><span>02</span><strong>Validate</strong><small>Typing + deduplication</small></div><i></i>
+            <div><span>03</span><strong>Model</strong><small>dbt staging + marts</small></div><i></i>
+            <div><span>04</span><strong>Monitor</strong><small>Tested risk metrics</small></div>
+          </div>
+        </section>
+
+        <footer><span>SignalGuard analytics</span><span id="data-source">Loading source…</span></footer>
+      </main>
+    </div>
+    <script src="data/dashboard-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+

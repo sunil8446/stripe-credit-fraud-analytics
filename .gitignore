@@ -1,0 +1,30 @@
+.DS_Store
+.env
+.venv/
+.uv-cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# dbt build output and local packages
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/.user.yml
+
+# Local databases, credentials, and downloaded data
+*.duckdb
+*.duckdb.wal
+*.db
+*.jsonl
+data/raw/*
+!data/raw/.gitkeep
+gcp-key.json
+**/service-account*.json
+
+# Workspace-only folders
+work/
+outputs/
+

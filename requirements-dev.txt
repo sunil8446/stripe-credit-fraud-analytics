@@ -1,2 +1,2 @@
--e .[dbt,dev]
+-e .[dbt,ml,dev]
 

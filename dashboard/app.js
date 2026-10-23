@@ -18,6 +18,7 @@ Chart.defaults.plugins.legend.labels.boxWidth = 7;
 const number = new Intl.NumberFormat("en-US");
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const percent = (value) => `${Number(value || 0).toFixed(2)}%`;
+const scorePercent = (value) => `${(Number(value || 0) * 100).toFixed(1)}%`;
 
 function setText(id, value) {
   document.getElementById(id).textContent = value;
@@ -102,11 +103,56 @@ function renderRiskTable() {
   `).join("");
 }
 
+function renderModel() {
+  const model = data.model;
+  const metrics = model.performance;
+  const isDemo = Number(metrics.sample_count) < 1000;
+  setText("average-precision", scorePercent(metrics.average_precision));
+  setText("roc-auc", scorePercent(metrics.roc_auc));
+  setText("model-precision", scorePercent(metrics.precision));
+  setText("model-recall", scorePercent(metrics.recall));
+  setText("model-scope", isDemo ? `Illustrative · ${number.format(metrics.sample_count)}-row sample` : `Validated · ${number.format(metrics.sample_count)} rows`);
+  setText("model-version", `${metrics.model_version} · ${metrics.validation_strategy}`);
+
+  const bandColors = { low: palette.muted, review: palette.mint, high: palette.amber, critical: palette.coral };
+  new Chart(document.getElementById("model-risk-chart"), {
+    type: "bar",
+    data: {
+      labels: model.risk_bands.map((item) => item.risk_band),
+      datasets: [{ data: model.risk_bands.map((item) => item.transaction_count), backgroundColor: model.risk_bands.map((item) => bandColors[item.risk_band]), borderRadius: 5 }]
+    },
+    options: barOptions("")
+  });
+
+  new Chart(document.getElementById("outcome-score-chart"), {
+    type: "bar",
+    data: {
+      labels: model.score_by_outcome.map((item) => item.outcome),
+      datasets: [
+        { label: "Hybrid score", data: model.score_by_outcome.map((item) => Number(item.average_risk_score) * 100), backgroundColor: palette.mint, borderRadius: 4 },
+        { label: "Anomaly score", data: model.score_by_outcome.map((item) => Number(item.average_anomaly_score) * 100), backgroundColor: palette.amber, borderRadius: 4 }
+      ]
+    },
+    options: { ...barOptions("%"), plugins: { legend: { display: true, position: "top", align: "end" } } }
+  });
+
+  document.getElementById("alert-table").innerHTML = model.top_alerts.map((item) => `
+    <tr>
+      <td>${item.transaction_id.slice(0, 13)}…</td>
+      <td>${currency.format(item.amount)}</td>
+      <td><span class="risk-badge">${item.risk_band} · ${scorePercent(item.risk_score)}</span></td>
+      <td class="${Number(item.is_fraud) === 1 ? "outcome-fraud" : ""}">${Number(item.is_fraud) === 1 ? "Fraud" : "Legitimate"}</td>
+      <td>${item.reason_1}</td>
+    </tr>
+  `).join("");
+}
+
 if (!data) {
   document.body.innerHTML = "<p>Dashboard data is unavailable. Run <code>make demo</code>.</p>";
 } else {
   renderSummary();
   renderCharts();
   renderRiskTable();
+  renderModel();
 }
 

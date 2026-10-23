@@ -22,7 +22,8 @@
           <a class="nav-link active" href="#overview"><span>01</span>Overview</a>
           <a class="nav-link" href="#segments"><span>02</span>Segments</a>
           <a class="nav-link" href="#risk"><span>03</span>Risk tiers</a>
-          <a class="nav-link" href="#pipeline"><span>04</span>Pipeline</a>
+          <a class="nav-link" href="#model"><span>04</span>ML model</a>
+          <a class="nav-link" href="#pipeline"><span>05</span>Pipeline</a>
         </nav>
         <div class="sidebar-status">
           <span class="pulse"></span>
@@ -81,13 +82,45 @@
           </div>
         </section>
 
+        <section class="model-section" id="model">
+          <div class="model-heading">
+            <div><p class="section-label">Phase 2 / hybrid detection</p><h2>Model intelligence</h2></div>
+            <div class="model-note"><span id="model-scope">Demo validation</span><small id="model-version">Loading model…</small></div>
+          </div>
+          <div class="model-kpis" aria-label="Model validation metrics">
+            <article><p>Average precision</p><strong id="average-precision">—</strong><small>out-of-fold</small></article>
+            <article><p>ROC AUC</p><strong id="roc-auc">—</strong><small>ranking quality</small></article>
+            <article><p>Precision</p><strong id="model-precision">—</strong><small>at learned threshold</small></article>
+            <article><p>Recall</p><strong id="model-recall">—</strong><small>fraud captured</small></article>
+          </div>
+          <div class="model-grid">
+            <article class="model-card">
+              <div class="panel-heading"><div><p class="section-label">Operational queue</p><h2>Model risk bands</h2></div><span class="tag accent">80% classifier · 20% anomaly</span></div>
+              <div class="chart-wrap compact"><canvas id="model-risk-chart"></canvas></div>
+            </article>
+            <article class="model-card">
+              <div class="panel-heading"><div><p class="section-label">Separation</p><h2>Average score by outcome</h2></div></div>
+              <div class="chart-wrap compact"><canvas id="outcome-score-chart"></canvas></div>
+            </article>
+          </div>
+          <article class="alert-card">
+            <div class="panel-heading"><div><p class="section-label">Explainable triage</p><h2>Highest-scored transactions</h2></div><span class="tag">Local feature reasons</span></div>
+            <div class="alert-table-wrap">
+              <table class="alert-table">
+                <thead><tr><th>Transaction</th><th>Amount</th><th>Risk</th><th>Outcome</th><th>Primary reason</th></tr></thead>
+                <tbody id="alert-table"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
         <section class="pipeline" id="pipeline">
           <div><p class="section-label">Data lineage</p><h2>From raw evidence to decisions</h2></div>
           <div class="pipeline-flow" aria-label="Pipeline stages">
             <div><span>01</span><strong>Ingest</strong><small>CSV → DuckDB / BigQuery</small></div><i></i>
             <div><span>02</span><strong>Validate</strong><small>Typing + deduplication</small></div><i></i>
-            <div><span>03</span><strong>Model</strong><small>dbt staging + marts</small></div><i></i>
-            <div><span>04</span><strong>Monitor</strong><small>Tested risk metrics</small></div>
+            <div><span>03</span><strong>Score</strong><small>Logistic + Isolation Forest</small></div><i></i>
+            <div><span>04</span><strong>Monitor</strong><small>dbt-tested risk metrics</small></div>
           </div>
         </section>
 

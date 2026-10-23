@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: ml
+    description: Reproducible outputs from the Phase 2 Python scoring pipeline.
+    schema: ml
+    tables:
+      - name: transaction_risk_scores
+        description: Hybrid supervised and anomaly scores with local explanations.
+      - name: model_metrics
+        description: Out-of-fold validation metrics for the current model version.

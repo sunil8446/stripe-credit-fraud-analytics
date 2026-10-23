@@ -34,5 +34,5 @@ jobs:
         run: dbt debug --project-dir dbt_project --profiles-dir dbt_project --target bigquery
 
       - name: Build BigQuery models
-        run: dbt build --project-dir dbt_project --profiles-dir dbt_project --target bigquery
+        run: dbt build --project-dir dbt_project --profiles-dir dbt_project --target bigquery --exclude tag:ml
 

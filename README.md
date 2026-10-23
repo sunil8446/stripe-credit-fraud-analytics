@@ -10,6 +10,10 @@ An end-to-end credit-card fraud analytics project inspired by Stripe-style risk
 monitoring. It turns the public ULB transaction dataset into tested analytical
 models and an interactive dashboard.
 
+**Phase 2 is now implemented:** a class-balanced logistic model and Isolation
+Forest produce reproducible hybrid risk scores, out-of-fold validation metrics,
+operational risk bands, and per-transaction explanations.
+
 This implementation is intentionally **local-first**: contributors can run the
 complete pipeline with DuckDB at no cost, while the same dbt project can deploy
 to BigQuery for a cloud portfolio demo.
@@ -22,6 +26,10 @@ to BigQuery for a cloud portfolio demo.
 - **Layered warehouse design:** raw → staging → intermediate → marts.
 - **Trustworthy metrics:** automated schema, relationship, accepted-value, and
   business-rule tests.
+- **Model-aware risk ranking:** supervised fraud probability is blended with an
+  unsupervised anomaly score without using the label as an input feature.
+- **Explainable alerts:** each scored transaction includes its strongest local
+  model reasons for analyst triage.
 - **Cost-aware automation:** cloud builds are manual; ordinary CI never spends
   BigQuery credits.
 - **Portfolio-ready delivery:** responsive dashboard, architecture docs, data
@@ -40,15 +48,18 @@ ULB CSV / sample seed
         │
         ▼
   int_transaction_features  amount bands, time bands, risk signals
-        │
-        ├───────────────┐
-        ▼               ▼
-  daily mart       segment mart      hourly mart
+        │                       raw features + labels
+        ├───────────────┐                 │
+        ▼               ▼                 ▼
+  KPI marts       heuristic mart    train_model.py
+        │               │           logit + Isolation Forest
         │               │                 │
-        └───────────────┴─────────────────┘
-                        │
-                        ▼
-             Chart.js dashboard / BI
+        │               └─────────┬───────┘
+        │                         ▼
+        └──────────────► ML score + performance marts
+                                  │
+                                  ▼
+                       Chart.js dashboard / BI
 ```
 
 ## Stack
@@ -57,6 +68,7 @@ ULB CSV / sample seed
 |---|---|---|
 | Warehouse | DuckDB | BigQuery |
 | Transformation | dbt Core | dbt Core |
+| ML | scikit-learn + joblib | Optional extension |
 | Quality | dbt tests + Pytest | dbt tests |
 | Dashboard | Chart.js | GitHub Pages / Looker Studio |
 | Automation | GitHub Actions | Manual BigQuery workflow |
@@ -67,7 +79,7 @@ Prerequisites: `uv`, Python 3.11–3.13, and `make`.
 
 ```bash
 make setup
-make demo
+make phase2
 make serve
 ```
 
@@ -86,8 +98,9 @@ it works without downloading data or creating a cloud account.
      --target duckdb
    ```
 
-3. Run `make dashboard` again. Unlike the demo target, this does not reseed the
-   raw table, so the full dataset remains in place.
+3. Run `make dashboard` again. It builds the analytics layer, retrains the model,
+   validates the ML marts, and exports the dashboard without reseeding the raw
+   table.
 
 The dataset contains 284,807 anonymized transactions from September 2013,
 including 492 labeled fraud cases. The source file is intentionally not stored
@@ -106,7 +119,8 @@ Google Application Default Credentials. Then run:
 .venv/bin/dbt build \
   --project-dir dbt_project \
   --profiles-dir dbt_project \
-  --target bigquery
+  --target bigquery \
+  --exclude tag:ml
 ```
 
 For GitHub Actions, configure these repository secrets:
@@ -124,7 +138,14 @@ Billing budget before running it.
 - Fraud rate by amount segment and time of day
 - Average fraud amount versus legitimate amount
 - Highest-risk hour and segment
+- Out-of-fold average precision, ROC AUC, precision, recall, and F1
+- Hybrid supervised/anomaly risk score and operational risk band
+- Top local model reasons for every scored transaction
 - Deduplication and data-quality statistics
+
+The bundled 30-row seed demonstrates the complete workflow, but its model
+metrics are **illustrative rather than statistically meaningful**. Load the
+full ULB dataset before interpreting model performance.
 
 ## Repository layout
 
@@ -139,10 +160,10 @@ tests/              Python tests
 
 ## Roadmap
 
-- Phase 1: batch analytics and dashboard (this repository)
-- Phase 2: anomaly scoring with Isolation Forest and explainable risk reasons
-- Phase 3: event streaming and alert simulation
-- Phase 4: analyst case-management workflow and model monitoring
+- Phase 1: batch analytics and dashboard — complete
+- Phase 2: hybrid scoring, explainable reasons, and model monitoring — complete
+- Phase 3: event streaming, threshold simulation, and drift monitoring
+- Phase 4: analyst case management and a feedback-driven retraining loop
 
 This project is educational and must not be used as the sole basis for blocking
 real financial transactions.

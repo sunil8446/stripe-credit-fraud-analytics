@@ -1,7 +1,8 @@
 # Cost controls
 
-The default project path is free: DuckDB, dbt, Chart.js, and public GitHub
-Actions/Pages require no cloud warehouse.
+The default project path is free: DuckDB, dbt, scikit-learn, joblib, Chart.js,
+and public GitHub Actions/Pages require no cloud warehouse. Phase 2 model
+training runs inside the local machine or GitHub Actions runner.
 
 For BigQuery deployments:
 

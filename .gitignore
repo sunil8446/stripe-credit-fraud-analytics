@@ -27,4 +27,5 @@ gcp-key.json
 # Workspace-only folders
 work/
 outputs/
+artifacts/
 

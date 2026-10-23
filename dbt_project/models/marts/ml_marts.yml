@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: fct_ml_risk_scores
+    description: Transaction-level hybrid risk scores and human-readable reasons.
+    config:
+      tags: [ml]
+    columns:
+      - name: transaction_id
+        data_tests: [not_null, unique]
+      - name: risk_score
+        data_tests: [not_null]
+      - name: risk_band
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [low, review, high, critical]
+      - name: reason_1
+        data_tests: [not_null]
+
+  - name: fct_model_performance
+    description: Versioned out-of-fold validation metrics for the active model.
+    config:
+      tags: [ml]
+    columns:
+      - name: model_version
+        data_tests: [not_null, unique]
+      - name: sample_count
+        data_tests: [not_null]
+      - name: average_precision
+        data_tests: [not_null]
+      - name: roc_auc
+        data_tests: [not_null]

@@ -21,7 +21,7 @@ jobs:
           cache: pip
 
       - name: Install project
-        run: pip install -e ".[dbt,dev]"
+        run: pip install -e ".[dbt,ml,dev]"
 
       - name: Lint Python
         run: ruff check src scripts tests
@@ -32,7 +32,9 @@ jobs:
       - name: Build and test dbt project
         run: |
           dbt seed --project-dir dbt_project --profiles-dir dbt_project --target local
-          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --exclude tag:ml
+          python scripts/train_model.py
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --select tag:ml
 
       - name: Export dashboard data
         run: python scripts/export_dashboard.py

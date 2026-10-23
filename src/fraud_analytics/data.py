@@ -7,7 +7,7 @@ from collections.abc import Iterable
 import pandas as pd
 
 REQUIRED_SOURCE_COLUMNS = {"time", "amount", "class"}
-PCA_COLUMNS = [f"v{index}" for index in range(1, 6)]
+PCA_COLUMNS = [f"v{index}" for index in range(1, 29)]
 OUTPUT_COLUMNS = [
     "transaction_id",
     "seconds_elapsed",

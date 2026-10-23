@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from fraud_analytics.data import normalize_transactions, validate_transactions
+from fraud_analytics.data import PCA_COLUMNS, normalize_transactions, validate_transactions
 
 
 def source_frame() -> pd.DataFrame:
@@ -27,13 +27,10 @@ def test_normalize_transactions_uses_case_insensitive_source_columns() -> None:
         "seconds_elapsed",
         "amount",
         "is_fraud",
-        "v1",
-        "v2",
-        "v3",
-        "v4",
-        "v5",
+        *PCA_COLUMNS,
     ]
     assert normalized["is_fraud"].tolist() == [0, 1]
+    assert normalized["v28"].tolist() == [0.0, 0.0]
 
 
 def test_exact_duplicates_receive_the_same_stable_identifier() -> None:

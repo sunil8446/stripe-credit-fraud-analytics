@@ -26,12 +26,14 @@ jobs:
           cache: pip
 
       - name: Install project
-        run: pip install -e ".[dbt]"
+        run: pip install -e ".[dbt,ml]"
 
       - name: Build analytics assets
         run: |
           dbt seed --project-dir dbt_project --profiles-dir dbt_project --target local
-          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --exclude tag:ml
+          python scripts/train_model.py
+          dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --select tag:ml
           python scripts/export_dashboard.py
           dbt docs generate --project-dir dbt_project --profiles-dir dbt_project --target local
           mkdir -p dashboard/dbt-docs

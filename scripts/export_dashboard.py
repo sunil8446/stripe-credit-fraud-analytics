@@ -84,6 +84,56 @@ def main() -> None:
                 when 'high' then 3 else 4 end
             """,
         )
+        model_performance = rows(
+            connection,
+            "select * from marts.fct_model_performance limit 1",
+        )[0]
+        model_risk_bands = rows(
+            connection,
+            """
+            select
+                risk_band,
+                count(*) as transaction_count,
+                sum(is_fraud) as fraud_count,
+                avg(risk_score) as average_risk_score
+            from marts.fct_ml_risk_scores
+            group by 1
+            order by case risk_band
+                when 'low' then 1 when 'review' then 2
+                when 'high' then 3 else 4 end
+            """,
+        )
+        top_alerts = rows(
+            connection,
+            """
+            select
+                transaction_id,
+                transaction_at,
+                amount,
+                is_fraud,
+                risk_score,
+                risk_band,
+                reason_1,
+                reason_2,
+                reason_3
+            from marts.fct_ml_risk_scores
+            order by risk_score desc
+            limit 8
+            """,
+        )
+        score_by_outcome = rows(
+            connection,
+            """
+            select
+                case when is_fraud = 1 then 'Fraud' else 'Legitimate' end as outcome,
+                avg(risk_score) as average_risk_score,
+                avg(supervised_score) as average_supervised_score,
+                avg(anomaly_score) as average_anomaly_score
+            from marts.fct_ml_risk_scores
+            group by 1
+            order by outcome desc
+            """,
+        )
     finally:
         connection.close()
 
@@ -95,6 +145,12 @@ def main() -> None:
         "segments": segments,
         "time_of_day": time_of_day,
         "risk_tiers": risk_tiers,
+        "model": {
+            "performance": model_performance,
+            "risk_bands": model_risk_bands,
+            "top_alerts": top_alerts,
+            "score_by_outcome": score_by_outcome,
+        },
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(

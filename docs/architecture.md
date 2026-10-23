@@ -15,10 +15,13 @@ BigQuery is an explicit deployment target rather than a prerequisite.
    transaction timestamp.
 4. `int_transaction_features` assigns amount segments, dayparts, and transparent
    heuristic risk signals. The heuristic does not use the fraud label.
-5. Marts aggregate daily performance, segment performance, and risk-tier
-   outcomes.
-6. `scripts/export_dashboard.py` creates a static JavaScript data bundle from
-   the tested marts.
+5. `scripts/train_model.py` evaluates a class-balanced logistic classifier with
+   stratified out-of-fold predictions, then fits it alongside an Isolation
+   Forest and publishes versioned transaction scores.
+6. ML marts join the scores to analytics features and validate score bounds,
+   coverage, risk bands, and model-performance metadata.
+7. `scripts/export_dashboard.py` creates a static JavaScript data bundle from
+   the tested analytics and ML marts.
 
 ## Why DuckDB and BigQuery
 
@@ -32,12 +35,13 @@ from consuming cloud resources.
 - Credentials are provided only through environment variables or GitHub Secrets.
 - Service-account JSON and downloaded transaction data are ignored by Git.
 - Cloud deployment is manual and has read-only repository permissions.
-- The dashboard receives aggregated data, not individual transactions.
+- Dashboard alerts use only content-derived transaction IDs and anonymized ULB
+  features; the source dataset contains no cardholder identity fields.
 
 ## Extension path
 
-The next logical layer is an offline model-training workflow that writes
-versioned risk scores back to the warehouse. A later streaming simulator can
-publish synthetic events to a queue without changing the marts or dashboard
+The next logical layer is a streaming simulator with temporal validation,
+threshold tuning, feature-drift checks, and an analyst feedback loop. It can
+publish synthetic events without changing the current marts or dashboard
 contract.
 

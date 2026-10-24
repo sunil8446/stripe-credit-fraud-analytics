@@ -1,4 +1,4 @@
-.PHONY: setup seed build train ml-build phase2 phase2-5 test export demo dashboard serve clean
+.PHONY: setup seed build train ml-build phase2 phase2-5 test export standalone demo dashboard serve clean
 
 PYTHON ?= python3
 DBT := .venv/bin/dbt
@@ -29,6 +29,10 @@ test: seed build train ml-build
 
 export:
 	.venv/bin/python scripts/export_dashboard.py
+	$(PYTHON) scripts/build_standalone_dashboard.py
+
+standalone:
+	$(PYTHON) scripts/build_standalone_dashboard.py
 
 demo: phase2-5
 

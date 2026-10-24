@@ -37,5 +37,7 @@ jobs:
           dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --select tag:ml
 
       - name: Export dashboard data
-        run: python scripts/export_dashboard.py
+        run: |
+          python scripts/export_dashboard.py
+          python scripts/build_standalone_dashboard.py
 

@@ -35,6 +35,7 @@ jobs:
           python scripts/train_model.py
           dbt build --project-dir dbt_project --profiles-dir dbt_project --target local --select tag:ml
           python scripts/export_dashboard.py
+          python scripts/build_standalone_dashboard.py
           dbt docs generate --project-dir dbt_project --profiles-dir dbt_project --target local
           mkdir -p dashboard/dbt-docs
           cp dbt_project/target/index.html dashboard/dbt-docs/

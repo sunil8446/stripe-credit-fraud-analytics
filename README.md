@@ -3,7 +3,7 @@
 [![CI](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/ci.yml)
 [![Dashboard](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/pages.yml/badge.svg)](https://github.com/sunil8446/stripe-credit-fraud-analytics/actions/workflows/pages.yml)
 
-[View the live dashboard](https://htmlpreview.github.io/?https://raw.githubusercontent.com/sunil8446/stripe-credit-fraud-analytics/main/dashboard/standalone.html)
+[View the live dashboard](https://htmlpreview.github.io/?https://raw.githubusercontent.com/sunil8446/stripe-credit-fraud-analytics/main/dashboard/standalone.html?phase=2.5-static)
 · [Browse the dbt models](https://github.com/sunil8446/stripe-credit-fraud-analytics/tree/main/dbt_project/models)
 
 An end-to-end credit-card fraud analytics project inspired by Stripe-style risk

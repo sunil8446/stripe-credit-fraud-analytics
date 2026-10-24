@@ -170,8 +170,14 @@ footer { display: flex; justify-content: space-between; padding: 24px 2px 0; col
 }
 
 
+.snapshot-list { display: grid; gap: 12px; height: 100%; align-content: center; }
+.snapshot-row { display: grid; grid-template-columns: minmax(76px, 1fr) 3fr auto; gap: 12px; align-items: center; }
+.snapshot-row > span:first-child { color: var(--muted); text-transform: capitalize; font: 500 11px/1.2 "DM Mono", monospace; }
+.snapshot-row strong { color: var(--text); font: 600 12px/1.2 "DM Mono", monospace; white-space: nowrap; }
+.snapshot-track { height: 7px; overflow: hidden; border-radius: 999px; background: rgba(169, 202, 193, .1); }
+.snapshot-fill { height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, var(--mint), var(--green)); }
+
 </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   </head>
   <body>
     <div class="shell">
@@ -199,77 +205,77 @@ footer { display: flex; justify-content: space-between; padding: 24px 2px 0; col
             <p class="eyebrow">Risk intelligence / portfolio demo</p>
             <h1>Fraud command center</h1>
           </div>
-          <div class="dataset-pill"><span></span><div><strong>ULB transactions</strong><small id="freshness">Demo snapshot</small></div></div>
+          <div class="dataset-pill"><span></span><div><strong>ULB transactions</strong><small id="freshness">Oct 24, 2026 · 18:02 UTC</small></div></div>
         </header>
 
         <section class="hero">
           <div>
             <p class="section-label">Observed fraud rate</p>
-            <div class="hero-number" id="fraud-rate">—</div>
+            <div class="hero-number" id="fraud-rate">16.67%</div>
             <p class="hero-copy">Labeled transaction outcomes, monitored across amount bands and time windows.</p>
           </div>
           <div class="hero-signal" aria-label="Risk signal visualization">
             <div class="orb"><span>LIVE</span></div>
-            <p><strong id="fraud-count">—</strong> flagged cases</p>
+            <p><strong id="fraud-count">5</strong> flagged cases</p>
           </div>
         </section>
 
         <section class="kpi-grid" aria-label="Key performance indicators">
-          <article class="kpi"><p>Transactions</p><strong id="transaction-count">—</strong><small>validated records</small></article>
-          <article class="kpi"><p>Total volume</p><strong id="transaction-amount">—</strong><small>observed value</small></article>
-          <article class="kpi danger"><p>Fraud exposure</p><strong id="fraud-amount">—</strong><small>labeled fraud value</small></article>
-          <article class="kpi"><p>Highest-risk band</p><strong id="highest-segment">—</strong><small id="highest-segment-rate">by observed rate</small></article>
+          <article class="kpi"><p>Transactions</p><strong id="transaction-count">30</strong><small>validated records</small></article>
+          <article class="kpi"><p>Total volume</p><strong id="transaction-amount">$15,966</strong><small>observed value</small></article>
+          <article class="kpi danger"><p>Fraud exposure</p><strong id="fraud-amount">$7,680</strong><small>labeled fraud value</small></article>
+          <article class="kpi"><p>Highest-risk band</p><strong id="highest-segment">large</strong><small id="highest-segment-rate">50.00% observed rate</small></article>
         </section>
 
         <section class="chart-grid" id="segments">
           <article class="panel wide">
             <div class="panel-heading"><div><p class="section-label">Trend</p><h2>Daily transaction pulse</h2></div><span class="tag">Volume + fraud</span></div>
-            <div class="chart-wrap"><canvas id="daily-chart"></canvas></div>
+            <div class="chart-wrap"><div class="snapshot-list"><div class="snapshot-row"><span>2013-09-01</span><div class="snapshot-track"><div class="snapshot-fill" style="width:100.0%"></div></div><strong>20 tx · 4 fraud</strong></div><div class="snapshot-row"><span>2013-09-02</span><div class="snapshot-track"><div class="snapshot-fill" style="width:50.0%"></div></div><strong>10 tx · 1 fraud</strong></div></div></div>
           </article>
           <article class="panel">
             <div class="panel-heading"><div><p class="section-label">Distribution</p><h2>Fraud by amount</h2></div></div>
-            <div class="chart-wrap"><canvas id="segment-chart"></canvas></div>
+            <div class="chart-wrap"><div class="snapshot-list"><div class="snapshot-row"><span>micro</span><div class="snapshot-track"><div class="snapshot-fill" style="width:2.0%"></div></div><strong>0.00%</strong></div><div class="snapshot-row"><span>small</span><div class="snapshot-track"><div class="snapshot-fill" style="width:9.1%"></div></div><strong>9.09%</strong></div><div class="snapshot-row"><span>medium</span><div class="snapshot-track"><div class="snapshot-fill" style="width:11.1%"></div></div><strong>11.11%</strong></div><div class="snapshot-row"><span>large</span><div class="snapshot-track"><div class="snapshot-fill" style="width:50.0%"></div></div><strong>50.00%</strong></div></div></div>
           </article>
           <article class="panel">
             <div class="panel-heading"><div><p class="section-label">Timing</p><h2>Risk through the day</h2></div></div>
-            <div class="chart-wrap"><canvas id="time-chart"></canvas></div>
+            <div class="chart-wrap"><div class="snapshot-list"><div class="snapshot-row"><span>night</span><div class="snapshot-track"><div class="snapshot-fill" style="width:18.8%"></div></div><strong>18.75%</strong></div><div class="snapshot-row"><span>morning</span><div class="snapshot-track"><div class="snapshot-fill" style="width:2.0%"></div></div><strong>0.00%</strong></div><div class="snapshot-row"><span>afternoon</span><div class="snapshot-track"><div class="snapshot-fill" style="width:20.0%"></div></div><strong>20.00%</strong></div><div class="snapshot-row"><span>evening</span><div class="snapshot-track"><div class="snapshot-fill" style="width:25.0%"></div></div><strong>25.00%</strong></div></div></div>
           </article>
         </section>
 
         <section class="panel risk-panel" id="risk">
           <div class="panel-heading"><div><p class="section-label">Explainable triage</p><h2>Heuristic risk tiers</h2></div><span class="tag accent">No label leakage</span></div>
           <div class="risk-layout">
-            <div class="chart-wrap compact"><canvas id="risk-chart"></canvas></div>
-            <div class="risk-table" id="risk-table"></div>
+            <div class="chart-wrap compact"><div class="snapshot-list"><div class="snapshot-row"><span>low</span><div class="snapshot-track"><div class="snapshot-fill" style="width:76.9%"></div></div><strong>10 tx</strong></div><div class="snapshot-row"><span>review</span><div class="snapshot-track"><div class="snapshot-fill" style="width:100.0%"></div></div><strong>13 tx</strong></div><div class="snapshot-row"><span>high</span><div class="snapshot-track"><div class="snapshot-fill" style="width:30.8%"></div></div><strong>4 tx</strong></div><div class="snapshot-row"><span>critical</span><div class="snapshot-track"><div class="snapshot-fill" style="width:23.1%"></div></div><strong>3 tx</strong></div></div></div>
+            <div class="risk-table" id="risk-table"><div class="risk-row"><div class="risk-name">low</div><div class="risk-value">10 txns</div><div class="risk-value">0.00% fraud</div></div><div class="risk-row"><div class="risk-name">review</div><div class="risk-value">13 txns</div><div class="risk-value">0.00% fraud</div></div><div class="risk-row"><div class="risk-name">high</div><div class="risk-value">4 txns</div><div class="risk-value">50.00% fraud</div></div><div class="risk-row"><div class="risk-name">critical</div><div class="risk-value">3 txns</div><div class="risk-value">100.00% fraud</div></div></div>
           </div>
         </section>
 
         <section class="model-section" id="model">
           <div class="model-heading">
             <div><p class="section-label">Phase 2.5 / temporal validation</p><h2>Model intelligence</h2></div>
-            <div class="model-note"><span id="model-scope">Demo validation</span><small id="model-version">Loading model…</small></div>
+            <div class="model-note"><span id="model-scope">Illustrative · 9-row temporal holdout</span><small id="model-version">hybrid-logit-iforest-v2.5 · chronological holdout; threshold tuned on training OOF</small></div>
           </div>
           <div class="model-kpis expanded" aria-label="Model validation metrics">
-            <article><p>Average precision</p><strong id="average-precision">—</strong><small>temporal holdout</small></article>
-            <article><p>ROC AUC</p><strong id="roc-auc">—</strong><small>ranking quality</small></article>
-            <article><p>Recall</p><strong id="model-recall">—</strong><small>fraud captured</small></article>
-            <article><p>False-positive rate</p><strong id="false-positive-rate">—</strong><small>holdout alerts</small></article>
-            <article><p>Brier score</p><strong id="brier-score">—</strong><small>lower is better</small></article>
-            <article><p>Cost savings</p><strong id="cost-savings">—</strong><small>vs. no alerts</small></article>
+            <article><p>Average precision</p><strong id="average-precision">100.0%</strong><small>temporal holdout</small></article>
+            <article><p>ROC AUC</p><strong id="roc-auc">100.0%</strong><small>ranking quality</small></article>
+            <article><p>Recall</p><strong id="model-recall">100.0%</strong><small>fraud captured</small></article>
+            <article><p>False-positive rate</p><strong id="false-positive-rate">25.0%</strong><small>holdout alerts</small></article>
+            <article><p>Brier score</p><strong id="brier-score">0.011</strong><small>lower is better</small></article>
+            <article><p>Cost savings</p><strong id="cost-savings">92.00%</strong><small>vs. no alerts</small></article>
           </div>
           <div class="validation-grid">
             <article class="model-card">
-              <div class="panel-heading"><div><p class="section-label">Untouched future window</p><h2>Holdout confusion matrix</h2></div><span class="tag" id="holdout-size">— rows</span></div>
+              <div class="panel-heading"><div><p class="section-label">Untouched future window</p><h2>Holdout confusion matrix</h2></div><span class="tag" id="holdout-size">9 rows</span></div>
               <div class="confusion-matrix" aria-label="Confusion matrix">
                 <div class="matrix-label"></div><div class="matrix-label">Predicted safe</div><div class="matrix-label">Predicted alert</div>
-                <div class="matrix-label row-label">Actually safe</div><div class="matrix-cell good"><strong id="true-negative">—</strong><small>True negative</small></div><div class="matrix-cell warn"><strong id="false-positive">—</strong><small>False positive</small></div>
-                <div class="matrix-label row-label">Actually fraud</div><div class="matrix-cell danger"><strong id="false-negative">—</strong><small>False negative</small></div><div class="matrix-cell good"><strong id="true-positive">—</strong><small>True positive</small></div>
+                <div class="matrix-label row-label">Actually safe</div><div class="matrix-cell good"><strong id="true-negative">6</strong><small>True negative</small></div><div class="matrix-cell warn"><strong id="false-positive">2</strong><small>False positive</small></div>
+                <div class="matrix-label row-label">Actually fraud</div><div class="matrix-cell danger"><strong id="false-negative">0</strong><small>False negative</small></div><div class="matrix-cell good"><strong id="true-positive">1</strong><small>True positive</small></div>
               </div>
-              <div class="threshold-strip"><div><small>Cost-aware threshold</small><strong id="decision-threshold">—</strong></div><div><small>Alert rate</small><strong id="alert-rate">—</strong></div><div><small>Miss : review cost</small><strong id="cost-ratio">—</strong></div></div>
+              <div class="threshold-strip"><div><small>Cost-aware threshold</small><strong id="decision-threshold">14.1%</strong></div><div><small>Alert rate</small><strong id="alert-rate">33.3%</strong></div><div><small>Miss : review cost</small><strong id="cost-ratio">25 : 1</strong></div></div>
             </article>
             <article class="model-card">
               <div class="panel-heading"><div><p class="section-label">Reliability</p><h2>Score calibration</h2></div><span class="tag">Predicted vs observed</span></div>
-              <div class="chart-wrap compact"><canvas id="calibration-chart"></canvas></div>
+              <div class="chart-wrap compact"><div class="snapshot-list"><div class="snapshot-row"><span>bin 0</span><div class="snapshot-track"><div class="snapshot-fill" style="width:2.0%"></div></div><strong>10.5% predicted · 0.0% observed</strong></div><div class="snapshot-row"><span>bin 4</span><div class="snapshot-track"><div class="snapshot-fill" style="width:100.0%"></div></div><strong>93.1% predicted · 100.0% observed</strong></div></div></div>
             </article>
           </div>
           <article class="alert-card comparison-card">
@@ -277,18 +283,18 @@ footer { display: flex; justify-content: space-between; padding: 24px 2px 0; col
             <div class="alert-table-wrap">
               <table class="alert-table comparison-table">
                 <thead><tr><th>Candidate</th><th>Avg precision</th><th>ROC AUC</th><th>Precision</th><th>Recall</th><th>Cost</th><th>Status</th></tr></thead>
-                <tbody id="comparison-table"></tbody>
+                <tbody id="comparison-table"><tr><td>Logistic regression</td><td>100.0%</td><td>100.0%</td><td>16.7%</td><td>100.0%</td><td>5 units</td><td><span class="">Candidate</span></td></tr><tr><td>Isolation Forest</td><td>100.0%</td><td>100.0%</td><td>50.0%</td><td>100.0%</td><td>1 units</td><td><span class="">Candidate</span></td></tr><tr><td>Hybrid model</td><td>100.0%</td><td>100.0%</td><td>33.3%</td><td>100.0%</td><td>2 units</td><td><span class="active-badge">Active</span></td></tr></tbody>
               </table>
             </div>
           </article>
           <div class="model-grid">
             <article class="model-card">
               <div class="panel-heading"><div><p class="section-label">Operational queue</p><h2>Model risk bands</h2></div><span class="tag accent">Active hybrid</span></div>
-              <div class="chart-wrap compact"><canvas id="model-risk-chart"></canvas></div>
+              <div class="chart-wrap compact"><div class="snapshot-list"><div class="snapshot-row"><span>low</span><div class="snapshot-track"><div class="snapshot-fill" style="width:100.0%"></div></div><strong>25 tx</strong></div><div class="snapshot-row"><span>critical</span><div class="snapshot-track"><div class="snapshot-fill" style="width:20.0%"></div></div><strong>5 tx</strong></div></div></div>
             </article>
             <article class="model-card">
               <div class="panel-heading"><div><p class="section-label">Separation</p><h2>Average score by outcome</h2></div></div>
-              <div class="chart-wrap compact"><canvas id="outcome-score-chart"></canvas></div>
+              <div class="chart-wrap compact"><div class="snapshot-list"><div class="snapshot-row"><span>Legitimate</span><div class="snapshot-track"><div class="snapshot-fill" style="width:7.0%"></div></div><strong>7.0% hybrid · 19.3% anomaly</strong></div><div class="snapshot-row"><span>Fraud</span><div class="snapshot-track"><div class="snapshot-fill" style="width:91.9%"></div></div><strong>91.9% hybrid · 75.3% anomaly</strong></div></div></div>
             </article>
           </div>
           <article class="alert-card">
@@ -296,7 +302,7 @@ footer { display: flex; justify-content: space-between; padding: 24px 2px 0; col
             <div class="alert-table-wrap">
               <table class="alert-table">
                 <thead><tr><th>Transaction</th><th>Amount</th><th>Risk</th><th>Outcome</th><th>Primary reason</th></tr></thead>
-                <tbody id="alert-table"></tbody>
+                <tbody id="alert-table"><tr><td>tx_0020</td><td>$3,200</td><td><span class="risk-badge">critical · 99.7%</span></td><td class="outcome-fraud">Fraud</td><td>unusual multivariate pattern</td></tr><tr><td>tx_0025</td><td>$680</td><td><span class="risk-badge">critical · 91.5%</span></td><td class="outcome-fraud">Fraud</td><td>unusual multivariate pattern</td></tr><tr><td>tx_0016</td><td>$60</td><td><span class="risk-badge">critical · 90.6%</span></td><td class="outcome-fraud">Fraud</td><td>unusual multivariate pattern</td></tr><tr><td>tx_0009</td><td>$2,500</td><td><span class="risk-badge">critical · 89.9%</span></td><td class="outcome-fraud">Fraud</td><td>unusual multivariate pattern</td></tr><tr><td>tx_0005</td><td>$1,240</td><td><span class="risk-badge">critical · 87.8%</span></td><td class="outcome-fraud">Fraud</td><td>anomalous V4 signal</td></tr><tr><td>tx_0001</td><td>$12</td><td><span class="risk-badge">low · 13.9%</span></td><td class="">Legitimate</td><td>anomalous V1 signal</td></tr><tr><td>tx_0013</td><td>$190</td><td><span class="risk-badge">low · 12.8%</span></td><td class="">Legitimate</td><td>anomalous V1 signal</td></tr><tr><td>tx_0008</td><td>$96</td><td><span class="risk-badge">low · 12.2%</span></td><td class="">Legitimate</td><td>transaction timing pattern</td></tr></tbody>
               </table>
             </div>
           </article>
@@ -312,11 +318,9 @@ footer { display: flex; justify-content: space-between; padding: 24px 2px 0; col
           </div>
         </section>
 
-        <footer><span>SignalGuard analytics</span><span id="data-source">Loading source…</span></footer>
+        <footer><span>SignalGuard analytics</span><span id="data-source">DuckDB dbt marts</span></footer>
       </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/gh/sunil8446/stripe-credit-fraud-analytics@main/dashboard/data/dashboard-data.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/sunil8446/stripe-credit-fraud-analytics@main/dashboard/app.js"></script>
   </body>
 </html>
 

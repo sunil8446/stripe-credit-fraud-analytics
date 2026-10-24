@@ -12,13 +12,14 @@ DASHBOARD = ROOT / "dashboard"
 def main() -> None:
     html = (DASHBOARD / "index.html").read_text(encoding="utf-8")
     styles = (DASHBOARD / "styles.css").read_text(encoding="utf-8")
-    data = (DASHBOARD / "data" / "dashboard-data.js").read_text(encoding="utf-8")
-    application = (DASHBOARD / "app.js").read_text(encoding="utf-8")
+    cdn = "https://cdn.jsdelivr.net/gh/sunil8446/stripe-credit-fraud-analytics@main/dashboard"
 
     replacements = {
         '<link rel="stylesheet" href="styles.css" />': f"<style>\n{styles}\n</style>",
-        '<script src="data/dashboard-data.js"></script>': f"<script>\n{data}\n</script>",
-        '<script src="app.js"></script>': f"<script>\n{application}\n</script>",
+        '<script src="data/dashboard-data.js"></script>': (
+            f'<script src="{cdn}/data/dashboard-data.js"></script>'
+        ),
+        '<script src="app.js"></script>': f'<script src="{cdn}/app.js"></script>',
     }
     for source, replacement in replacements.items():
         if source not in html:

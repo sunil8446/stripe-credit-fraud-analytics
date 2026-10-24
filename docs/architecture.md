@@ -15,11 +15,13 @@ BigQuery is an explicit deployment target rather than a prerequisite.
    transaction timestamp.
 4. `int_transaction_features` assigns amount segments, dayparts, and transparent
    heuristic risk signals. The heuristic does not use the fraud label.
-5. `scripts/train_model.py` evaluates a class-balanced logistic classifier with
-   stratified out-of-fold predictions, then fits it alongside an Isolation
-   Forest and publishes versioned transaction scores.
-6. ML marts join the scores to analytics features and validate score bounds,
-   coverage, risk bands, and model-performance metadata.
+5. `scripts/train_model.py` keeps the newest transactions as a chronological
+   holdout. Training-period out-of-fold scores tune a cost-aware threshold;
+   logistic, Isolation Forest, and hybrid candidates are then compared on the
+   untouched future window.
+6. ML marts join scores to analytics features and validate score bounds,
+   coverage, risk bands, confusion totals, calibration, candidate comparisons,
+   and model-performance metadata.
 7. `scripts/export_dashboard.py` creates a static JavaScript data bundle from
    the tested analytics and ML marts.
 
@@ -40,8 +42,7 @@ from consuming cloud resources.
 
 ## Extension path
 
-The next logical layer is a streaming simulator with temporal validation,
-threshold tuning, feature-drift checks, and an analyst feedback loop. It can
-publish synthetic events without changing the current marts or dashboard
-contract.
+The next logical layer is a streaming simulator with feature-drift checks and
+an analyst feedback loop. It can publish synthetic events without changing the
+current marts or dashboard contract.
 

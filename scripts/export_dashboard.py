@@ -134,6 +134,19 @@ def main() -> None:
             order by outcome desc
             """,
         )
+        model_comparison = rows(
+            connection,
+            """
+            select * from marts.fct_model_comparison
+            order by case model_name
+                when 'Logistic regression' then 1
+                when 'Isolation Forest' then 2 else 3 end
+            """,
+        )
+        model_calibration = rows(
+            connection,
+            "select * from marts.fct_model_calibration order by bin",
+        )
     finally:
         connection.close()
 
@@ -150,6 +163,8 @@ def main() -> None:
             "risk_bands": model_risk_bands,
             "top_alerts": top_alerts,
             "score_by_outcome": score_by_outcome,
+            "comparison": model_comparison,
+            "calibration": model_calibration,
         },
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

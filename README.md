@@ -10,8 +10,9 @@ An end-to-end credit-card fraud analytics project inspired by Stripe-style risk
 monitoring. It turns the public ULB transaction dataset into tested analytical
 models and an interactive dashboard.
 
-**Phase 2 is now implemented:** a class-balanced logistic model and Isolation
-Forest produce reproducible hybrid risk scores, out-of-fold validation metrics,
+**Phase 2.5 is now implemented:** a class-balanced logistic model and Isolation
+Forest produce reproducible hybrid risk scores, temporal holdout metrics,
+cost-aware alert thresholds, candidate comparisons, calibration diagnostics,
 operational risk bands, and per-transaction explanations.
 
 This implementation is intentionally **local-first**: contributors can run the
@@ -30,6 +31,8 @@ to BigQuery for a cloud portfolio demo.
   unsupervised anomaly score without using the label as an input feature.
 - **Explainable alerts:** each scored transaction includes its strongest local
   model reasons for analyst triage.
+- **Honest evaluation:** the newest transactions are kept outside training, and
+  the alert threshold is selected from training-period predictions only.
 - **Cost-aware automation:** cloud builds are manual; ordinary CI never spends
   BigQuery credits.
 - **Portfolio-ready delivery:** responsive dashboard, architecture docs, data
@@ -52,7 +55,7 @@ ULB CSV / sample seed
         ├───────────────┐                 │
         ▼               ▼                 ▼
   KPI marts       heuristic mart    train_model.py
-        │               │           logit + Isolation Forest
+        │               │           temporal validation + cost tuning
         │               │                 │
         │               └─────────┬───────┘
         │                         ▼
@@ -79,7 +82,7 @@ Prerequisites: `uv`, Python 3.11–3.13, and `make`.
 
 ```bash
 make setup
-make phase2
+make phase2-5
 make serve
 ```
 
@@ -138,7 +141,10 @@ Billing budget before running it.
 - Fraud rate by amount segment and time of day
 - Average fraud amount versus legitimate amount
 - Highest-risk hour and segment
-- Out-of-fold average precision, ROC AUC, precision, recall, and F1
+- Temporal holdout average precision, ROC AUC, precision, recall, and F1
+- False-positive rate, Brier score, calibration error, and confusion matrix
+- Cost-aware threshold using a documented 25:1 missed-fraud/review cost ratio
+- Like-for-like logistic, Isolation Forest, and hybrid model comparison
 - Hybrid supervised/anomaly risk score and operational risk band
 - Top local model reasons for every scored transaction
 - Deduplication and data-quality statistics
@@ -146,6 +152,11 @@ Billing budget before running it.
 The bundled 30-row seed demonstrates the complete workflow, but its model
 metrics are **illustrative rather than statistically meaningful**. Load the
 full ULB dataset before interpreting model performance.
+
+The hybrid remains the active operational candidate because it combines
+ranking, anomaly coverage, and local explanations. The comparison table reports
+holdout results transparently; it does not auto-promote a winner from the tiny
+demo holdout.
 
 ## Repository layout
 
@@ -162,6 +173,7 @@ tests/              Python tests
 
 - Phase 1: batch analytics and dashboard — complete
 - Phase 2: hybrid scoring, explainable reasons, and model monitoring — complete
+- Phase 2.5: temporal validation, model comparison, calibration, and cost tuning — complete
 - Phase 3: event streaming, threshold simulation, and drift monitoring
 - Phase 4: analyst case management and a feedback-driven retraining loop
 

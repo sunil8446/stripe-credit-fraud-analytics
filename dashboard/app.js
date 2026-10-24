@@ -109,10 +109,51 @@ function renderModel() {
   const isDemo = Number(metrics.sample_count) < 1000;
   setText("average-precision", scorePercent(metrics.average_precision));
   setText("roc-auc", scorePercent(metrics.roc_auc));
-  setText("model-precision", scorePercent(metrics.precision));
   setText("model-recall", scorePercent(metrics.recall));
-  setText("model-scope", isDemo ? `Illustrative · ${number.format(metrics.sample_count)}-row sample` : `Validated · ${number.format(metrics.sample_count)} rows`);
+  setText("false-positive-rate", scorePercent(metrics.false_positive_rate));
+  setText("brier-score", Number(metrics.brier_score).toFixed(3));
+  setText("cost-savings", percent(metrics.cost_savings_pct));
+  setText("true-negative", number.format(metrics.true_negative_count));
+  setText("false-positive", number.format(metrics.false_positive_count));
+  setText("false-negative", number.format(metrics.false_negative_count));
+  setText("true-positive", number.format(metrics.true_positive_count));
+  setText("holdout-size", `${number.format(metrics.validation_count)} rows`);
+  setText("decision-threshold", scorePercent(metrics.decision_threshold));
+  setText("alert-rate", scorePercent(metrics.alert_rate));
+  setText("cost-ratio", `${Number(metrics.false_negative_cost).toFixed(0)} : ${Number(metrics.false_positive_cost).toFixed(0)}`);
+  setText("model-scope", isDemo ? `Illustrative · ${number.format(metrics.validation_count)}-row temporal holdout` : `Validated · ${number.format(metrics.validation_count)}-row holdout`);
   setText("model-version", `${metrics.model_version} · ${metrics.validation_strategy}`);
+
+  new Chart(document.getElementById("calibration-chart"), {
+    type: "scatter",
+    data: {
+      datasets: [
+        { label: "Observed", data: model.calibration.map((item) => ({ x: Number(item.mean_predicted_score), y: Number(item.observed_fraud_rate) })), borderColor: palette.mint, backgroundColor: palette.mint, showLine: true, tension: .2, pointRadius: 4 },
+        { label: "Perfect", data: [{ x: 0, y: 0 }, { x: 1, y: 1 }], borderColor: palette.muted, borderDash: [4, 4], showLine: true, pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "top", align: "end" } },
+      scales: {
+        x: { min: 0, max: 1, title: { display: true, text: "Predicted score" }, grid: { color: palette.grid }, ticks: { callback: (value) => `${value * 100}%` } },
+        y: { min: 0, max: 1, title: { display: true, text: "Observed fraud" }, grid: { color: palette.grid }, ticks: { callback: (value) => `${value * 100}%` } }
+      }
+    }
+  });
+
+  document.getElementById("comparison-table").innerHTML = model.comparison.map((item) => `
+    <tr>
+      <td>${item.model_name}</td>
+      <td>${scorePercent(item.average_precision)}</td>
+      <td>${scorePercent(item.roc_auc)}</td>
+      <td>${scorePercent(item.precision)}</td>
+      <td>${scorePercent(item.recall)}</td>
+      <td>${Number(item.expected_cost).toFixed(0)} units</td>
+      <td><span class="${item.selected_model ? "active-badge" : ""}">${item.selected_model ? "Active" : "Candidate"}</span></td>
+    </tr>
+  `).join("");
 
   const bandColors = { low: palette.muted, review: palette.mint, high: palette.amber, critical: palette.coral };
   new Chart(document.getElementById("model-risk-chart"), {

@@ -1,4 +1,4 @@
-.PHONY: setup seed build train ml-build phase2 test export demo dashboard serve clean
+.PHONY: setup seed build train ml-build phase2 phase2-5 test export demo dashboard serve clean
 
 PYTHON ?= python3
 DBT := .venv/bin/dbt
@@ -14,12 +14,14 @@ build:
 	$(DBT) build --project-dir dbt_project --profiles-dir dbt_project --target local --exclude tag:ml
 
 train:
-	.venv/bin/python scripts/train_model.py
+	PYTHONPATH=src .venv/bin/python scripts/train_model.py
 
 ml-build:
 	$(DBT) build --project-dir dbt_project --profiles-dir dbt_project --target local --select tag:ml
 
-phase2: seed build train ml-build export
+phase2: phase2-5
+
+phase2-5: seed build train ml-build export
 
 test: seed build train ml-build
 	.venv/bin/pytest
@@ -28,7 +30,7 @@ test: seed build train ml-build
 export:
 	.venv/bin/python scripts/export_dashboard.py
 
-demo: phase2
+demo: phase2-5
 
 dashboard: build train ml-build export
 

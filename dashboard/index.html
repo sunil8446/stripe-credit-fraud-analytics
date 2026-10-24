@@ -7,7 +7,7 @@
     <title>SignalGuard · Fraud Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   </head>
@@ -84,18 +84,44 @@
 
         <section class="model-section" id="model">
           <div class="model-heading">
-            <div><p class="section-label">Phase 2 / hybrid detection</p><h2>Model intelligence</h2></div>
+            <div><p class="section-label">Phase 2.5 / temporal validation</p><h2>Model intelligence</h2></div>
             <div class="model-note"><span id="model-scope">Demo validation</span><small id="model-version">Loading model…</small></div>
           </div>
-          <div class="model-kpis" aria-label="Model validation metrics">
-            <article><p>Average precision</p><strong id="average-precision">—</strong><small>out-of-fold</small></article>
+          <div class="model-kpis expanded" aria-label="Model validation metrics">
+            <article><p>Average precision</p><strong id="average-precision">—</strong><small>temporal holdout</small></article>
             <article><p>ROC AUC</p><strong id="roc-auc">—</strong><small>ranking quality</small></article>
-            <article><p>Precision</p><strong id="model-precision">—</strong><small>at learned threshold</small></article>
             <article><p>Recall</p><strong id="model-recall">—</strong><small>fraud captured</small></article>
+            <article><p>False-positive rate</p><strong id="false-positive-rate">—</strong><small>holdout alerts</small></article>
+            <article><p>Brier score</p><strong id="brier-score">—</strong><small>lower is better</small></article>
+            <article><p>Cost savings</p><strong id="cost-savings">—</strong><small>vs. no alerts</small></article>
           </div>
+          <div class="validation-grid">
+            <article class="model-card">
+              <div class="panel-heading"><div><p class="section-label">Untouched future window</p><h2>Holdout confusion matrix</h2></div><span class="tag" id="holdout-size">— rows</span></div>
+              <div class="confusion-matrix" aria-label="Confusion matrix">
+                <div class="matrix-label"></div><div class="matrix-label">Predicted safe</div><div class="matrix-label">Predicted alert</div>
+                <div class="matrix-label row-label">Actually safe</div><div class="matrix-cell good"><strong id="true-negative">—</strong><small>True negative</small></div><div class="matrix-cell warn"><strong id="false-positive">—</strong><small>False positive</small></div>
+                <div class="matrix-label row-label">Actually fraud</div><div class="matrix-cell danger"><strong id="false-negative">—</strong><small>False negative</small></div><div class="matrix-cell good"><strong id="true-positive">—</strong><small>True positive</small></div>
+              </div>
+              <div class="threshold-strip"><div><small>Cost-aware threshold</small><strong id="decision-threshold">—</strong></div><div><small>Alert rate</small><strong id="alert-rate">—</strong></div><div><small>Miss : review cost</small><strong id="cost-ratio">—</strong></div></div>
+            </article>
+            <article class="model-card">
+              <div class="panel-heading"><div><p class="section-label">Reliability</p><h2>Score calibration</h2></div><span class="tag">Predicted vs observed</span></div>
+              <div class="chart-wrap compact"><canvas id="calibration-chart"></canvas></div>
+            </article>
+          </div>
+          <article class="alert-card comparison-card">
+            <div class="panel-heading"><div><p class="section-label">Candidate bake-off</p><h2>Model comparison</h2></div><span class="tag accent">Same temporal holdout</span></div>
+            <div class="alert-table-wrap">
+              <table class="alert-table comparison-table">
+                <thead><tr><th>Candidate</th><th>Avg precision</th><th>ROC AUC</th><th>Precision</th><th>Recall</th><th>Cost</th><th>Status</th></tr></thead>
+                <tbody id="comparison-table"></tbody>
+              </table>
+            </div>
+          </article>
           <div class="model-grid">
             <article class="model-card">
-              <div class="panel-heading"><div><p class="section-label">Operational queue</p><h2>Model risk bands</h2></div><span class="tag accent">80% classifier · 20% anomaly</span></div>
+              <div class="panel-heading"><div><p class="section-label">Operational queue</p><h2>Model risk bands</h2></div><span class="tag accent">Active hybrid</span></div>
               <div class="chart-wrap compact"><canvas id="model-risk-chart"></canvas></div>
             </article>
             <article class="model-card">

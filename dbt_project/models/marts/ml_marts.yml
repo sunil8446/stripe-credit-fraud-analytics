@@ -20,7 +20,7 @@ models:
         data_tests: [not_null]
 
   - name: fct_model_performance
-    description: Versioned out-of-fold validation metrics for the active model.
+    description: Versioned temporal holdout and cost metrics for the active model.
     config:
       tags: [ml]
     columns:
@@ -31,4 +31,32 @@ models:
       - name: average_precision
         data_tests: [not_null]
       - name: roc_auc
+        data_tests: [not_null]
+      - name: decision_threshold
+        data_tests: [not_null]
+      - name: validation_count
+        data_tests: [not_null]
+
+  - name: fct_model_comparison
+    description: Holdout comparison of supervised, anomaly-only, and hybrid detectors.
+    config:
+      tags: [ml]
+    columns:
+      - name: model_name
+        data_tests: [not_null, unique]
+      - name: average_precision
+        data_tests: [not_null]
+      - name: expected_cost
+        data_tests: [not_null]
+
+  - name: fct_model_calibration
+    description: Calibration bins comparing predicted score with observed fraud rate.
+    config:
+      tags: [ml]
+    columns:
+      - name: bin
+        data_tests: [not_null, unique]
+      - name: mean_predicted_score
+        data_tests: [not_null]
+      - name: observed_fraud_rate
         data_tests: [not_null]

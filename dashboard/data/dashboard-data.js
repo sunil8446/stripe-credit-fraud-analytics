@@ -1,5 +1,5 @@
 window.FRAUD_DATA = {
-  "generated_at": "2026-10-23T00:47:51+00:00",
+  "generated_at": "2026-10-24T18:02:45+00:00",
   "source": "DuckDB dbt marts",
   "summary": {
     "transaction_count": 30,
@@ -122,18 +122,34 @@ window.FRAUD_DATA = {
   ],
   "model": {
     "performance": {
-      "model_version": "hybrid-logit-iforest-v1",
-      "validation_strategy": "5-fold stratified out-of-fold",
+      "model_version": "hybrid-logit-iforest-v2.5",
+      "validation_strategy": "chronological holdout; threshold tuned on training OOF",
       "sample_count": 30,
+      "training_count": 21,
+      "validation_count": 9,
       "fraud_count": 5,
       "feature_count": 7,
-      "decision_threshold": 0.9019296609742269,
-      "average_precision": 0.8555555555555556,
-      "roc_auc": 0.896,
-      "precision": 1.0,
-      "recall": 0.8,
-      "f1_score": 0.8888888888888888,
-      "trained_at": "2026-10-23 00:47:37.970638"
+      "validation_start_seconds": 90000,
+      "decision_threshold": 0.14063146369978263,
+      "false_positive_cost": 1.0,
+      "false_negative_cost": 25.0,
+      "average_precision": 1.0,
+      "roc_auc": 1.0,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "f1_score": 0.5,
+      "brier_score": 0.011260295829299442,
+      "calibration_error": 0.10115535301542988,
+      "true_negative_count": 6,
+      "false_positive_count": 2,
+      "false_negative_count": 0,
+      "true_positive_count": 1,
+      "false_positive_rate": 0.25,
+      "alert_rate": 0.3333333333333333,
+      "expected_cost": 2.0,
+      "baseline_cost": 25.0,
+      "cost_savings_pct": 92.0,
+      "trained_at": "2026-10-23 01:35:52.656979"
     },
     "risk_bands": [
       {
@@ -251,6 +267,77 @@ window.FRAUD_DATA = {
         "average_risk_score": 0.9186940890694825,
         "average_supervised_score": 0.9601237729472236,
         "average_anomaly_score": 0.7529753535585177
+      }
+    ],
+    "comparison": [
+      {
+        "model_name": "Logistic regression",
+        "selected_model": false,
+        "decision_threshold": 0.03893131035156636,
+        "average_precision": 1.0,
+        "roc_auc": 1.0,
+        "precision": 0.16666666666666666,
+        "recall": 1.0,
+        "f1_score": 0.2857142857142857,
+        "true_negative_count": 3,
+        "false_positive_count": 5,
+        "false_negative_count": 0,
+        "true_positive_count": 1,
+        "expected_cost": 5.0,
+        "model_version": "hybrid-logit-iforest-v2.5",
+        "evaluated_at": "2026-10-23 01:35:52.656979"
+      },
+      {
+        "model_name": "Isolation Forest",
+        "selected_model": false,
+        "decision_threshold": 0.5196550631323827,
+        "average_precision": 1.0,
+        "roc_auc": 1.0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1_score": 0.6666666666666666,
+        "true_negative_count": 7,
+        "false_positive_count": 1,
+        "false_negative_count": 0,
+        "true_positive_count": 1,
+        "expected_cost": 1.0,
+        "model_version": "hybrid-logit-iforest-v2.5",
+        "evaluated_at": "2026-10-23 01:35:52.656979"
+      },
+      {
+        "model_name": "Hybrid model",
+        "selected_model": true,
+        "decision_threshold": 0.14063146369978263,
+        "average_precision": 1.0,
+        "roc_auc": 1.0,
+        "precision": 0.3333333333333333,
+        "recall": 1.0,
+        "f1_score": 0.5,
+        "true_negative_count": 6,
+        "false_positive_count": 2,
+        "false_negative_count": 0,
+        "true_positive_count": 1,
+        "expected_cost": 2.0,
+        "model_version": "hybrid-logit-iforest-v2.5",
+        "evaluated_at": "2026-10-23 01:35:52.656979"
+      }
+    ],
+    "calibration": [
+      {
+        "bin": 0,
+        "mean_predicted_score": 0.10522215591265231,
+        "observed_fraud_rate": 0.0,
+        "sample_count": 8,
+        "model_version": "hybrid-logit-iforest-v2.5",
+        "evaluated_at": "2026-10-23 01:35:52.656979"
+      },
+      {
+        "bin": 4,
+        "mean_predicted_score": 0.9313790701623496,
+        "observed_fraud_rate": 1.0,
+        "sample_count": 1,
+        "model_version": "hybrid-logit-iforest-v2.5",
+        "evaluated_at": "2026-10-23 01:35:52.656979"
       }
     ]
   }

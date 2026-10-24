@@ -8,4 +8,8 @@ sources:
       - name: transaction_risk_scores
         description: Hybrid supervised and anomaly scores with local explanations.
       - name: model_metrics
-        description: Out-of-fold validation metrics for the current model version.
+        description: Temporal holdout metrics for the current model version.
+      - name: model_comparison
+        description: Like-for-like holdout metrics for each candidate detector.
+      - name: model_calibration
+        description: Predicted versus observed fraud rates on the temporal holdout.

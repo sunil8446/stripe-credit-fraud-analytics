@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train the Phase 2 model and publish scores into DuckDB."""
+"""Train the Phase 2.5 model and publish validation outputs into DuckDB."""
 
 from __future__ import annotations
 
@@ -44,15 +44,33 @@ def main() -> None:
             metrics[key] = [value]
         metrics["trained_at"] = generated_at
 
+        comparisons = result.comparisons.copy()
+        comparisons["model_version"] = result.metrics["model_version"]
+        comparisons["evaluated_at"] = generated_at
+
+        calibration = result.calibration.copy()
+        calibration["model_version"] = result.metrics["model_version"]
+        calibration["evaluated_at"] = generated_at
+
         connection.execute("create schema if not exists ml")
         connection.register("scores_frame", scores)
         connection.register("metrics_frame", metrics)
+        connection.register("comparisons_frame", comparisons)
+        connection.register("calibration_frame", calibration)
         connection.execute(
             "create or replace table ml.transaction_risk_scores as "
             "select * from scores_frame"
         )
         connection.execute(
             "create or replace table ml.model_metrics as select * from metrics_frame"
+        )
+        connection.execute(
+            "create or replace table ml.model_comparison as "
+            "select * from comparisons_frame"
+        )
+        connection.execute(
+            "create or replace table ml.model_calibration as "
+            "select * from calibration_frame"
         )
     finally:
         connection.close()
@@ -64,12 +82,15 @@ def main() -> None:
             "feature_names": result.feature_names,
             "supervised_model": result.supervised_model,
             "anomaly_model": result.anomaly_model,
+            "decision_threshold": result.metrics["decision_threshold"],
+            "validation_strategy": result.metrics["validation_strategy"],
         },
         ARTIFACT,
     )
     print(
         "Trained {model_version} on {sample_count} rows: AP={average_precision:.3f}, "
-        "ROC AUC={roc_auc:.3f}, recall={recall:.3f}".format(**result.metrics)
+        "ROC AUC={roc_auc:.3f}, recall={recall:.3f}, cost savings={cost_savings_pct:.1f}%"
+        .format(**result.metrics)
     )
     print(f"Published scores to {DATABASE} and model artifact to {ARTIFACT}")
 
